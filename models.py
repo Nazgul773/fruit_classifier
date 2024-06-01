@@ -1,6 +1,5 @@
 import torch.nn as nn
 import torch.nn.functional as F
-import torchvision.models as models
 from torchvision.models import resnet50, ResNet50_Weights
 
 
@@ -12,6 +11,9 @@ class PretrainedFruitVeggieClassifier(nn.Module):
 
         # Laden des vortrainierten ResNet-Modells
         self.model = resnet50(weights=ResNet50_Weights.IMAGENET1K_V2)
+
+        # Modify the first convolutional layer to accept 4 channels instead of 3
+        self.model.conv1 = nn.Conv2d(4, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
 
         # Ersetzen des letzten Fully-Connected Layers
         self.model.fc = nn.Linear(self.model.fc.in_features, num_classes)
