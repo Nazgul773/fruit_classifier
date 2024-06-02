@@ -2,22 +2,20 @@ import os
 
 import torch
 import torch.nn as nn
-from preprocessors import preprocess
-
-from models import FruitVeggieClassifier0Acc, FruitVeggieClassifier55Acc, PretrainedFruitVeggieClassifier
+from utils.preprocessors import preprocess
+from utils.models import PretrainedFruitVeggieClassifier
 
 # Hyperparameter
 NUM_CLASSES = 36
 NUM_EPOCHS = 20
 BATCH_SIZE = 32
 LEARNING_RATE = 0.001
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 # Option to build the model from scratch or load a saved model
 def build_or_load_model(model):
     path = model.model_path
-    optimizer = torch.optim.AdamW(model.parameters(), lr=LEARNING_RATE, weight_decay=1e-4)
+    optimizer = torch.optim.AdamW(filter(lambda p: p.requires_grad, model.parameters()), lr=LEARNING_RATE, weight_decay=1e-4)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=2)
     start_epoch = 0
 
@@ -108,6 +106,17 @@ def train_and_validate(train_loader, val_loader, model, optimizer,
                     f'Early stopping at epoch {epoch + 1}. Best validation loss: {best_val_loss:.4f} at epoch {best_epoch + 1}.')
                 break
 
+
+def is_cuda_available(device):
+    if device == torch.device("cuda"):
+        device_name = torch.cuda.get_device_name(0)
+        print(f'CUDA is available - Using {device_name}.')
+    else:
+        print(f'CUDA is not available - Using {device}.')
+
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+is_cuda_available(device)
 
 init_model = PretrainedFruitVeggieClassifier(num_classes=NUM_CLASSES).to(device)
 

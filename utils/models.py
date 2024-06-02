@@ -9,17 +9,23 @@ class PretrainedFruitVeggieClassifier(nn.Module):
         self.model_path = model_path
         self.model_type = "Pretrained"
 
-        # Laden des vortrainierten ResNet-Modells
+        # Load the pre-trained ResNet model
         self.model = resnet50(weights=ResNet50_Weights.IMAGENET1K_V2)
 
         # Modify the first convolutional layer to accept 4 channels instead of 3
         self.model.conv1 = nn.Conv2d(4, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
 
-        # Ersetzen des letzten Fully-Connected Layers
+        # Replace the last Fully-Connected Layer
         self.model.fc = nn.Linear(self.model.fc.in_features, num_classes)
 
     def forward(self, x):
         return self.model(x)
+
+    def freeze_layers(self):
+        # Freeze all layers except the first convolutional layer and the output layer
+        for name, param in self.model.named_parameters():
+            if not (name.startswith('conv1') or name.startswith('fc')):
+                param.requires_grad = False
 
 
 class FruitVeggieClassifier0Acc(nn.Module):
