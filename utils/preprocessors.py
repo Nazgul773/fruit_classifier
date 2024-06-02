@@ -61,23 +61,6 @@ def get_transformer(model_type):
         v2.Normalize(mean=[0.485, 0.456, 0.406, 0.5], std=[0.229, 0.224, 0.225, 0.5])
     ])
 
-    # train_transform = v2.Compose([
-    #     v2.Resize(resize_param),
-    #     v2.RandomHorizontalFlip(),
-    #     # transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
-    #     v2.RandomRotation(degrees=random_rotation_degrees),
-    #     v2.CenterCrop(center_crop_param),
-    #     v2.ToTensor(),
-    #     v2.Normalize(mean=[0.485, 0.456, 0.406, 0.5], std=[0.229, 0.224, 0.225, 0.5])
-    # ])
-    #
-    # val_test_transform = transforms.Compose([
-    #     transforms.Resize(resize_param),
-    #     transforms.CenterCrop(center_crop_param),
-    #     transforms.ToTensor(),
-    #     transforms.Normalize(mean=[0.485, 0.456, 0.406, 0.5], std=[0.229, 0.224, 0.225, 0.5])
-    # ])
-
     return train_transform, val_test_transform
 
 
